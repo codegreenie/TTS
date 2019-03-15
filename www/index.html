@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#2196f3">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+  <title>ODM Mobile</title>
+  <link rel="stylesheet" href="css/framework7.min.css">
+  <link rel="apple-touch-icon" href="img/f7-icon-square.png">
+  <link rel="icon" href="img/f7-icon.png">
+</head>
+<body>
+ 
+  <h1>Implementing Text To Speech Cordova</h1>
+
+<script src="cordova.js"></script>
+<script>
+  
+function deviceIsReady(){
+
+
+readTextToSpeech = function(theText){
+
+    app.dialog.alert("Initiating Text To Speech...");
+
+    setTimeout(function(){
+      app.dialog.close()
+    }, 1500);
+
+        TTS.speak({
+          text : 'Welcome to the Federal Republic of Nigeria',
+          locale: 'en-US',
+          rate: 1
+        }, 
+        function () {
+
+            alert('success');
+
+        }, function (reason) {
+            
+            alert(reason);
+
+        });
+  }
+
+
+  stopTextToSpeech = function(){
+        TTS.speak({
+          text : '',
+          locale: 'en-US',
+          rate: 1
+        });
+  }
+  
+}
+
+document.addEventListener("deviceready", deviceIsReady, false);
+</script>
+</body>
+</html>
