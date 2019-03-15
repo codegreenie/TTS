@@ -21,15 +21,6 @@
   
 function deviceIsReady(){
 
-
-readTextToSpeech = function(theText){
-
-    app.dialog.alert("Initiating Text To Speech...");
-
-    setTimeout(function(){
-      app.dialog.close()
-    }, 1500);
-
         TTS.speak({
           text : 'Welcome to the Federal Republic of Nigeria',
           locale: 'en-US',
@@ -44,16 +35,7 @@ readTextToSpeech = function(theText){
             alert(reason);
 
         });
-  }
 
-
-  stopTextToSpeech = function(){
-        TTS.speak({
-          text : '',
-          locale: 'en-US',
-          rate: 1
-        });
-  }
   
 }
 
