@@ -104,8 +104,8 @@ window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
                 var admobid = {};
                 if(app.theme == "md"){
                   admobid = {
-                    banner: 'ca-app-pub-8716485588609849/1279938259',
-                    interstitial: 'ca-app-pub-8716485588609849/2663859039'
+                    banner: 'ca-app-pub-8716485588609849/9399825217',
+                    interstitial: 'ca-app-pub-8716485588609849/5899547992'
                   };
                 }else{
                   admobid = {
