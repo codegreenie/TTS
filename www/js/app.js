@@ -365,7 +365,7 @@ $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
         timeout : '0',
         method: 'GET',
         data: {
-          limit : '500'
+          limit : '100'
         },
         success : function (lokey) {
               console.log(JSON.parse(lokey));
