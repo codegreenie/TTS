@@ -24,7 +24,7 @@
     </plugin>
     <plugin name="cordova-plugin-admobpro" spec="2.49.0">
         <variable name="PLAY_SERVICES_VERSION" value="16.0.0" />
-        <variable name="ADMOB_APP_ID" value="ca-app-pub-8716485588609849~3166082726" />
+        <variable name="ADMOB_APP_ID" value="ca-app-pub-8716485588609849~2151874677" />
     </plugin>
     <plugin name="onesignal-cordova-plugin" spec="2.9.1" />
     <platform name="android">
