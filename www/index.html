@@ -5,41 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#2196f3">
+  <meta name="theme-color" content="#1c1c1d">
   <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
-  <title>ODM Mobile</title>
+  <title>Quick Blockchain</title>
   <link rel="stylesheet" href="css/framework7.min.css">
-  <link rel="apple-touch-icon" href="img/f7-icon-square.png">
-  <link rel="icon" href="img/f7-icon.png">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/qbc.css">
+  <link rel="stylesheet" href="css/animate.css">
+  
+  
+    
+  
 </head>
-<body>
- 
-  <h1>Implementing Text To Speech Cordova</h1>
+<body class="theme-dark">
+  <div id="app">
+    <div class="statusbar"></div>
 
+
+    
+      <div class="view view-main view-init">
+
+           <div class="page" data-name="main" style="padding-bottom: 0px;">
+
+            <div class="page-content" style="padding-bottom: 0px;">
+
+
+               <div class="text-color-white" style="background-image: url('imgs/bg.jpg'); background-repeat: no-repeat; background-size: cover; width: 100%; height:100%; background-position: center top;">
+
+
+            <div class="sweet-nylon" style="opacity: 0.7; width: 100%; height: 100%; position: absolute;background-color: #043a7a;"></div>
+
+                      <div class="block text-color-white text-center" style="position: absolute; width: 100%; top:20%;">
+                        <img src="imgs/qb.png" style="margin: 0 auto; display: block; max-width:140px;">
+                      <h2 style="font-size: 22px;">Quick Blockchain</h2>
+
+                      <p class="">
+                        v1.7.5
+                        <br>
+                        Loading ...
+                      </p>
+                       
+                      </div>
+
+                   </div>
+
+
+
+
+
+
+
+          </div><!-- Page Content -->
+
+   
+
+           </div>
+
+
+           </div>
+
+
+
+
+</div>
 <script src="cordova.js"></script>
-<script>
-  
-function deviceIsReady(){
+<script src="js/framework7.min.js"></script>
+<script src="js/routes.js"></script>
+<script src="js/app.js"></script>
+<script type="text/javascript">
 
-        TTS.speak({
-          text : 'Welcome to the Federal Republic of Nigeria',
-          locale: 'en-US',
-          rate: 1
-        }, 
-        function () {
+  setTimeout(function(){
+    mainView.router.navigate("/dashboard/");  
+  }, 2000);
 
-            alert('success');
 
-        }, function (reason) {
-            
-            alert(reason);
-
-        });
-
-  
-}
-
-document.addEventListener("deviceready", deviceIsReady, false);
 </script>
+
+
 </body>
 </html>
