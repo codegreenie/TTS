@@ -377,8 +377,6 @@ var bigData = null;
           limit : '200'
         },
         success : function (lokey) {
-              console.log(JSON.parse(lokey));
-
             bigData = JSON.parse(lokey);
             console.log("Big data is", bigData);
             
@@ -401,8 +399,15 @@ var bigData = null;
               var coinSymbol = data[q]["symbol"];
               coinSymbolLC = coinSymbol.toLowerCase();
               var coinRank = data[q]["rank"];
-              var changePercent = 0;
+              var changePercent = parseFloat(data[q]["changePercent24Hr"]).toFixed(2) + "%";
 
+              var changeColor = 'text-color-green';
+              if (changePercent.includes("-")) {
+              	changeColor = 'text-color-red';
+              }
+              else{
+              	changeColor = 'text-color-green';
+              }
 
 
            
@@ -414,36 +419,21 @@ var bigData = null;
               
               var coinImage = "https://icons.bitbot.tools/api/" + coinSymbolLC + "/32x32";
 
-              coinStack += "<li onclick=routeTo('" + coinID + "')><a href='#' class='item-link item-content'><div class='lazy item-media' style='border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url(" + coinImage + "); background-size:cover; background-repeat:no-repeat;'><small style='margin: -60px auto 0px;'>" + coinRank + "</small></div><div class='item-inner'><div class='item-title text-color-white'><div class='item-header'>Market Cap: $" + coinMarketCap + "</div>" + coinName + " (" + coinSymbol + ")<div class='item-footer text-color-white'><span>Volume 24H: $" + coinVolume + "</span><br><small class='text-color-green changePercentSpan" + q + "'>" + changePercent + "</small> &nbsp; </div> </div> <div class='item-after text-color-white'>$" + coinPrice +"</div> </div> </a> </li>"; 
+              coinStack += "<li onclick=routeTo('" + coinID + "')><a href='#' class='item-link item-content'><div class='lazy item-media' style='border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url(" + coinImage + "); background-size:cover; background-repeat:no-repeat;'><small style='margin: -60px auto 0px;'>" + coinRank + "</small></div><div class='item-inner'><div class='item-title text-color-white'><div class='item-header'>Market Cap: $" + coinMarketCap + "</div>" + coinName + " (" + coinSymbol + ")<div class='item-footer text-color-white'><span>Volume 24H: $" + coinVolume + "</span><br><small class=" + changeColor +" id='changePercentSpan" + q + "'>1D " + changePercent + "</small> &nbsp; </div> </div> <div class='item-after text-color-white'>$" + coinPrice +"</div> </div> </a> </li>"; 
+
 
                  
                 }
 
+                
                 $$("#coin-stack-list").html(coinStack);
                 app.preloader.hide();
                 lastItemIndex = $$('.coin-stack-list li').length;
+                
+                
+                
 
-                for(q = 0; q <= 19; q++){
-
-                 // Quickly check for 24 hours volume change
-                app.request({
-
-                url : 'https://api.coincap.io/v2/assets/' + coinID, 
-                timeout : '0',
-                method: 'GET',
-                success : function (lokeys) {
-                  var pressCharge = JSON.parse(lokeys);
-                  console.log(pressCharge);
-                  changePercent = pressCharge["data"]["changePercent24Hr"];
-                  $$("small.changePercentSpan" + q).text(changePercent + "%");
-                },
-                error : function(){
-                  app.dialog.alert("An error occured");
-                }
-
-                });
-
-              }
+                
         },
         error :  function(xhr, status){
 
@@ -454,6 +444,8 @@ var bigData = null;
       });
 
      }
+
+
 
 
 // Attach 'infinite' event handler
@@ -483,8 +475,17 @@ $$('.infinite-scroll-content').on('infinite', function () {
     for (var i = lastItemIndex; i < lastItemIndex + itemsPerLoad; i++) {
 
       var coinImage = "https://icons.bitbot.tools/api/" + bigData["data"][i]["symbol"].toLowerCase() + "/32x32";
+      var changePercent = parseFloat(bigData["data"][i]["changePercent24Hr"]).toFixed(2) + "%";
 
-      html += "<li onclick=routeTo('" + bigData["data"][i]["id"] + "')><a href='#' class='item-link item-content'><div class='lazy item-media' style='border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url(" + coinImage + "); background-size:cover; background-repeat:no-repeat;'><small style='margin: -60px auto 0px;'>" + bigData["data"][i]["rank"] + "</small></div><div class='item-inner'><div class='item-title text-color-white'><div class='item-header'>Market Cap: $" + thousands_separators(bigData["data"][i]["marketCapUsd"]) + "</div>" + bigData["data"][i]["name"] + " (" + bigData["data"][i]["symbol"] + ")<div class='item-footer text-color-white'><span>Volume 24H: $" + thousands_separators(bigData["data"][i]["volumeUsd24Hr"]) + "</span><br><small class='text-color-green'>1D +0.88%</small> &nbsp;</div> </div> <div class='item-after text-color-white'>$" + thousands_separators(bigData["data"][i]["priceUsd"]) +"</div> </div> </a> </li>";  
+      var changeColor = 'text-color-green';
+              if (changePercent.includes("-")) {
+              	changeColor = 'text-color-red';
+              }
+              else{
+              	changeColor = 'text-color-green';
+              }
+
+      html += "<li onclick=routeTo('" + bigData["data"][i]["id"] + "')><a href='#' class='item-link item-content'><div class='lazy item-media' style='border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url(" + coinImage + "); background-size:cover; background-repeat:no-repeat;'><small style='margin: -60px auto 0px;'>" + bigData["data"][i]["rank"] + "</small></div><div class='item-inner'><div class='item-title text-color-white'><div class='item-header'>Market Cap: $" + thousands_separators(bigData["data"][i]["marketCapUsd"]) + "</div>" + bigData["data"][i]["name"] + " (" + bigData["data"][i]["symbol"] + ")<div class='item-footer text-color-white'><span>Volume 24H: $" + thousands_separators(bigData["data"][i]["volumeUsd24Hr"]) + "</span><br><small class=" + changeColor + ">1D " + changePercent + "</small> &nbsp;</div> </div> <div class='item-after text-color-white'>$" + thousands_separators(bigData["data"][i]["priceUsd"]) +"</div> </div> </a> </li>";  
     }
 
     // Append new items
