@@ -205,8 +205,6 @@ window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
   
 
   document.addEventListener("backbutton", function (){
-
-    app.sheet.close();
     
     var currentPage = mainView.router.currentRoute.name;
     
@@ -239,25 +237,12 @@ window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
 $$(document).on('page:init', function(e){
 
 var pageName = e.detail.name;
-
-  $$(".how-to-use-button").click(function(){
-    window.localStorage.removeItem("intro");
-    if (pageName == "dashboard") {
-      mainView.router.refreshPage();
-    }
-    else{
-      mainView.router.navigate("/dashboard/");
-    }          
-  });
-
     
       if (pageName != "main"){
         setTimeout(function(){
           AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
          }, 500);
       }
-
-
 
 });
 
@@ -356,7 +341,31 @@ $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
 
 
 
-  function loadMarket(){
+ function  thousands_separators(num) {
+    var num = parseFloat(num).toFixed(3);
+    var num_parts = num.toString().split(".");
+    num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num_parts.join(".");
+}
+
+
+  // Loading flag
+var allowInfinite = true;
+
+// Last loaded index
+var lastItemIndex = null;
+
+// Max items to load
+var maxItems = 200;
+
+// Append items per load
+var itemsPerLoad = 20;
+
+var bigData = null;
+
+
+
+ function loadMarket(){
 
 
 
@@ -365,23 +374,24 @@ $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
         timeout : '0',
         method: 'GET',
         data: {
-          limit : '100'
+          limit : '200'
         },
         success : function (lokey) {
               console.log(JSON.parse(lokey));
+
+            bigData = JSON.parse(lokey);
+            console.log("Big data is", bigData);
             
             var lokey = JSON.parse(lokey);
             var data = lokey["data"];
             var coinStack = "";
 
-            function  thousands_separators(num) {
-                var num = parseFloat(num).toFixed(3);
-                var num_parts = num.toString().split(".");
-                num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                return num_parts.join(".");
-            }
 
-          for(q = 0; q < data.length; q++){
+            
+
+           
+
+          for(q = 0; q <= 19; q++){
 
                var coinID = data[q]["id"];
               var coinName = data[q]["name"];
@@ -391,6 +401,11 @@ $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
               var coinSymbol = data[q]["symbol"];
               coinSymbolLC = coinSymbol.toLowerCase();
               var coinRank = data[q]["rank"];
+              var changePercent = 0;
+
+
+
+           
 
           
 
@@ -399,13 +414,36 @@ $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
               
               var coinImage = "https://icons.bitbot.tools/api/" + coinSymbolLC + "/32x32";
 
-              coinStack += "<li onclick=routeTo('" + coinID + "')><a href='#' class='item-link item-content'><div class='lazy item-media' style='border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url(" + coinImage + "); background-size:cover; background-repeat:no-repeat;'><small style='margin: -60px auto 0px;'>" + coinRank + "</small></div><div class='item-inner'><div class='item-title text-color-white'><div class='item-header'>Market Cap: $" + coinMarketCap + "</div>" + coinName + " (" + coinSymbol + ")<div class='item-footer text-color-white'><span>Volume 24H: $" + coinVolume + "</span><br><small class='text-color-green'>1H +0.37%</small> &nbsp; <small class='text-color-green'>1D +0.88%</small> &nbsp; <small class='text-color-red'>7D -0.62%</small> </div> </div> <div class='item-after text-color-white'>$" + coinPrice +"</div> </div> </a> </li>"; 
+              coinStack += "<li onclick=routeTo('" + coinID + "')><a href='#' class='item-link item-content'><div class='lazy item-media' style='border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url(" + coinImage + "); background-size:cover; background-repeat:no-repeat;'><small style='margin: -60px auto 0px;'>" + coinRank + "</small></div><div class='item-inner'><div class='item-title text-color-white'><div class='item-header'>Market Cap: $" + coinMarketCap + "</div>" + coinName + " (" + coinSymbol + ")<div class='item-footer text-color-white'><span>Volume 24H: $" + coinVolume + "</span><br><small class='text-color-green changePercentSpan" + q + "'>" + changePercent + "</small> &nbsp; </div> </div> <div class='item-after text-color-white'>$" + coinPrice +"</div> </div> </a> </li>"; 
 
                  
                 }
 
                 $$("#coin-stack-list").html(coinStack);
                 app.preloader.hide();
+                lastItemIndex = $$('.coin-stack-list li').length;
+
+                for(q = 0; q <= 19; q++){
+
+                 // Quickly check for 24 hours volume change
+                app.request({
+
+                url : 'https://api.coincap.io/v2/assets/' + coinID, 
+                timeout : '0',
+                method: 'GET',
+                success : function (lokeys) {
+                  var pressCharge = JSON.parse(lokeys);
+                  console.log(pressCharge);
+                  changePercent = pressCharge["data"]["changePercent24Hr"];
+                  $$("small.changePercentSpan" + q).text(changePercent + "%");
+                },
+                error : function(){
+                  app.dialog.alert("An error occured");
+                }
+
+                });
+
+              }
         },
         error :  function(xhr, status){
 
@@ -416,6 +454,51 @@ $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
       });
 
      }
+
+
+// Attach 'infinite' event handler
+$$('.infinite-scroll-content').on('infinite', function () {
+
+  // Exit, if loading in progress
+  if (!allowInfinite) return;
+
+  // Set loading flag
+  allowInfinite = false;
+
+  // Emulate 1s loading
+  setTimeout(function () {
+    // Reset loading flag
+    allowInfinite = true;
+
+    if (lastItemIndex >= maxItems) {
+      // Nothing more to load, detach infinite scroll events to prevent unnecessary loadings
+      //app.infiniteScroll.destroy('.infinite-scroll-content');
+      // Remove preloader
+      //$$('.infinite-scroll-preloader').remove();
+      return;
+    }
+
+    // Generate new items HTML
+    var html = '';
+    for (var i = lastItemIndex; i < lastItemIndex + itemsPerLoad; i++) {
+
+      var coinImage = "https://icons.bitbot.tools/api/" + bigData["data"][i]["symbol"].toLowerCase() + "/32x32";
+
+      html += "<li onclick=routeTo('" + bigData["data"][i]["id"] + "')><a href='#' class='item-link item-content'><div class='lazy item-media' style='border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url(" + coinImage + "); background-size:cover; background-repeat:no-repeat;'><small style='margin: -60px auto 0px;'>" + bigData["data"][i]["rank"] + "</small></div><div class='item-inner'><div class='item-title text-color-white'><div class='item-header'>Market Cap: $" + thousands_separators(bigData["data"][i]["marketCapUsd"]) + "</div>" + bigData["data"][i]["name"] + " (" + bigData["data"][i]["symbol"] + ")<div class='item-footer text-color-white'><span>Volume 24H: $" + thousands_separators(bigData["data"][i]["volumeUsd24Hr"]) + "</span><br><small class='text-color-green'>1D +0.88%</small> &nbsp;</div> </div> <div class='item-after text-color-white'>$" + thousands_separators(bigData["data"][i]["priceUsd"]) +"</div> </div> </a> </li>";  
+    }
+
+    // Append new items
+    $$('.coin-stack-list ul').append(html);
+
+    // Update last loaded index
+    lastItemIndex = $$('.coin-stack-list li').length;
+    
+  }, 1000);
+});
+
+
+
+
 
      setTimeout(function() {
         loadMarket();
@@ -429,14 +512,10 @@ $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
 
 
 
-    //push to last scroll
-    if (window.localStorage.getItem("currentScroll")) {
-        var lastScroll = window.localStorage.getItem("currentScroll");
-        $$("#page-content").scrollTop(lastScroll, 600);
-    }
+   
 
 
-
+/*
 
   if (!window.localStorage.getItem("my_banks")) {
     
@@ -450,7 +529,7 @@ $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
     emptyBankArray.push(emptyBankDetails);
     window.localStorage.setItem("my_banks", JSON.stringify(emptyBankArray));
 
-  }
+  }*/
 
  
 
