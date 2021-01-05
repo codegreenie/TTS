@@ -45,7 +45,7 @@ function deviceIsReady(){
 
 
   StatusBar.styleLightContent();
-  StatusBar.backgroundColorByHexString("#043a7a");
+  StatusBar.backgroundColorByHexString("#000000");
 
   
       changeStatusBarColor = function(suppliedColor){
@@ -153,7 +153,7 @@ window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
                   if(window.AdMob) AdMob.prepareInterstitial({
                       adId:admobid.interstitial, 
                       autoShow:false,
-                      isTesting:false
+                      isTesting:true
                   });
 
               }
@@ -174,7 +174,7 @@ window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
                     position:AdMob.AD_POSITION.BOTTOM_CENTER,
                     overlap: true,
                     autoShow: false,
-                    isTesting : false,
+                    isTesting : true,
                     success : function(){
                       console.log("Yay! Banner ad is active");
                     },
@@ -255,9 +255,7 @@ $$(document).on('page:beforeout', function (e) {
 
 
 
-$$(document).on('page:afterin', '.page[data-name="about"]', function (e){
-  changeStatusBarColor("#043a7a");
-});
+
 $$(document).on('page:init', '.page[data-name="about"]', function (e){
 
   $$(".left .link").click(function(){
@@ -283,9 +281,6 @@ $$(document).on('page:init', '.page[data-name="about"]', function (e){
 
 
 
-$$(document).on('page:afterin', '.page[data-name="privacy"]', function (e){
-  changeStatusBarColor("#043a7a");
-});
 $$(document).on('page:init', '.page[data-name="privacy"]', function (e){
 
   $$(".left .link").click(function(){
@@ -306,20 +301,6 @@ $$(document).on('page:init', '.page[data-name="privacy"]', function (e){
 
 
 
-
-$$(document).on('page:afterin', '.page[data-name="dashboard"]', function (e){
-  
-  changeStatusBarColor("#1c1c1d");
-
-  });
-
-$$(document).on('page:beforeout', '.page[data-name="dashboard"]', function (e){
-  
-   //grab the current scroll position & store
-    var currentScroll = $$("#page-content").scrollTop();
-    window.localStorage.setItem("currentScroll", currentScroll);
-
-});
 
   
 $$(document).on('page:init', '.page[data-name="dashboard"]', function (e){
@@ -516,57 +497,114 @@ $$('.infinite-scroll-content').on('infinite', function () {
    
 
 
-/*
 
-  if (!window.localStorage.getItem("my_banks")) {
+
+  if (!window.localStorage.getItem("my_coins")) {
     
-    var emptyBankArray = [];
+    var emptyCoinsArray = [];
     var emptyBankDetails = {
-      "bank_path" : "",
-      "bank_image" : "",
-      "bank_ussd" : "",
-      "bank_name" : ""
+      "coin_symbol" : "",
+      "coin_name" : ""
     }
-    emptyBankArray.push(emptyBankDetails);
-    window.localStorage.setItem("my_banks", JSON.stringify(emptyBankArray));
+    emptyCoinsArray.push(emptyBankDetails);
+    window.localStorage.setItem("my_coins", JSON.stringify(emptyCoinsArray));
 
-  }*/
-
- 
+  }
 
 
-  
 
-  // now look for my banks
-/*
-  var myBanks = window.localStorage.getItem("my_banks");
-  myBanks = JSON.parse(myBanks);
 
-  if (myBanks.length != 1) {
-    for(q = 1; q < myBanks.length; q++){
 
-        var bankName = myBanks[q]["bank_name"];
-        var bankPath = myBanks[q]["bank_path"];
-        var bankImage = myBanks[q]["bank_image"];
-        var bankUssd = myBanks[q]["bank_ussd"];
 
-        $$("#favorite-banks-list-ul").append("<li style='padding-bottom:10px;'><div class='item-content' onclick=routeTo(" + + "")><div class='item-media' style='border:solid 2px #ededed;border-radius:50%; width:60px;height:60px;background:url(imgs/" + bankImage + "); background-size:cover; background-repeat:no-repeat;' onclick=routeTo('" + bankPath + "')></div><div class='item-inner'><div class='item-title'><a href='/" + bankPath + "/' class='text-color-black'>" + bankName + "</a></div><div class='item-after text-color-black'><a href='/" + bankPath + "/' class='text-color-black'  style='margin-top:10px;'><span style='margin-top:10px;'>" + bankUssd + "</span>&nbsp;</a><a href='#' style='color:#043a7a;' onclick=routeTo('" + bankPath + "')><i class='f7-icons' style='font-size:38px;'>phone_round</i></a></div></div></div></li>");
+
+
+
+
+
+
+  // now look for my coins
+
+  var myCoins = window.localStorage.getItem("my_coins");
+  myCoins = JSON.parse(myCoins);
+
+  if (myCoins.length != 1) {
+    for(q = 1; q < myCoins.length; q++){
+
+        var coinName = myCoins[q]["coin_name"];
+        var coinSymbol = myCoins[q]["coin_symbol"];
+        
+
+        app.request({
+        url : 'https://api.coincap.io/v2/assets/' + coinSymbol, 
+        timeout : '0',
+        method: 'GET',
+        success : function (lokey) {
+              console.log(JSON.parse(lokey));
+              app.preloader.hide();
+
+            
+            var lokey = JSON.parse(lokey);
+            var data = lokey["data"];
+            var coinStack = "";
+
+              var coinID = data["id"];
+              coinName = data["name"];
+              var coinMarketCap = thousands_separators(data["marketCapUsd"]);
+              var coinVolume = thousands_separators(data["volumeUsd24Hr"]);
+              var coinPrice = thousands_separators(data["priceUsd"]);
+              var coinSymbol = data["symbol"];
+              coinSymbolLC = coinSymbol.toLowerCase();
+              var coinRank = data["rank"];
+              var changePercent = parseFloat(data["changePercent24Hr"]).toFixed(2) + "%";
+
+
+              var changeColor = 'text-color-green';
+              if (changePercent.includes("-")) {
+                changeColor = 'text-color-red';
+              }
+              else{
+                changeColor = 'text-color-green';
+              }
+
+
+
+              var coinImage = "https://icons.bitbot.tools/api/" + coinSymbolLC + "/32x32";
+
+               $$('.favorite-coin-stack-list ul').append("<li onclick=routeTo('" + coinID + "')><a href='#' class='item-link item-content'><div class='lazy item-media' style='border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url(" + coinImage + "); background-size:cover; background-repeat:no-repeat;'><small style='margin: -60px auto 0px;'>" + coinRank + "</small></div><div class='item-inner'><div class='item-title text-color-white'><div class='item-header'>Market Cap: $" + coinMarketCap + "</div>" + coinName + " (" + coinSymbol + ")<div class='item-footer text-color-white'><span>Volume 24H: $" + coinVolume + "</span><br><small class=" + changeColor +" id='changePercentSpan" + q + "'>1D " + changePercent + "</small> &nbsp; </div> </div> <div class='item-after text-color-white'>$" + coinPrice +"</div> </div> </a> </li>"); 
+
+
+                 
+                
+
+                
+               
+
+              
+        },
+        error :  function(xhr, status){
+
+            app.dialog.alert("Unable to fetch data");
+            console.log(status);
+            app.preloader.hide();
+        }
+      });
+
+        
     }
 
-    $$("#block-title-my-banks, #favorite-banks-list").show();
-    $$("#block-title-all-banks").css({"margin-top" : "15px"});
+    app.preloader.hide();
+
+    
   }
   else{
 
-    $$("#block-title-my-banks, #favorite-banks-list").hide();
-    $$("#block-title-all-banks").removeAttr("style");
-  }*/
+    app.preloader.hide();
+    app.dialog.alert("No favorite coin yet.");
+
+  }
 
 
 
- 
-
-  
 
 
 
@@ -631,6 +669,13 @@ $$('.infinite-scroll-content').on('infinite', function () {
 
 
 
+
+
+
+
+
+
+
 $$(document).on('page:init', '.page[data-name="coindetails"]', function (e){
 
    $$(".left .link").click(function(){
@@ -640,10 +685,33 @@ $$(document).on('page:init', '.page[data-name="coindetails"]', function (e){
   app.preloader.show("blue");
 
   var coinToParse = window.localStorage.getItem("coinToParse");
+  var coinName;
 
-  setTimeout(function() {
-    loadCoinDetails(coinToParse);
-  }, 100);
+
+
+  var bitcoinPrice = 0;
+
+
+  app.request({
+        url : 'https://api.coincap.io/v2/assets/bitcoin', 
+        timeout : '0',
+        method: 'GET',
+        success : function (lokey) {
+            var lokey = JSON.parse(lokey);
+            var data = lokey["data"];
+            var coinPrice = data["priceUsd"];
+            bitcoinPrice = coinPrice;
+
+            loadCoinDetails(coinToParse);
+
+            },
+            error :  function(xhr, status){
+
+            app.dialog.alert("Unable to fetch data");
+            console.log(status);
+            app.preloader.hide();
+        }
+      });
 
 function loadCoinDetails(coinToParse){
     app.request({
@@ -657,7 +725,7 @@ function loadCoinDetails(coinToParse){
             
             var lokey = JSON.parse(lokey);
             var data = lokey["data"];
-            var coinStack = "";
+            
 
             function  thousands_separators(num) {
                 var num = parseFloat(num).toFixed(3);
@@ -666,16 +734,45 @@ function loadCoinDetails(coinToParse){
                 return num_parts.join(".");
             }
 
+            
+
               var coinID = data["id"];
-              var coinName = data["name"];
+              coinName = data["name"];
               var coinMarketCap = thousands_separators(data["marketCapUsd"]);
               var coinVolume = thousands_separators(data["volumeUsd24Hr"]);
               var coinPrice = thousands_separators(data["priceUsd"]);
               var coinSymbol = data["symbol"];
               coinSymbolLC = coinSymbol.toLowerCase();
               var coinRank = data["rank"];
+              var changePercent = parseFloat(data["changePercent24Hr"]).toFixed(2) + "%";
+              var coinCirculatingSupply = thousands_separators(data["supply"]);
+              var coinMaxSupply = thousands_separators(data["maxSupply"]);
+              var coinPercentageSupplied = parseInt((data["supply"] / data["maxSupply"]) * 100);
+
+              var coinBTCPrice = parseFloat(data["priceUsd"] / bitcoinPrice).toFixed(8);
+
+              var coinImage = "https://icons.bitbot.tools/api/" + coinSymbolLC + "/32x32";
+
+               var changeColor = 'text-color-green';
+              if (changePercent.includes("-")) {
+                changeColor = 'text-color-red';
+              }
+              else{
+                changeColor = 'text-color-green';
+              }
 
               $$(".title").html(coinName);
+              $$("#coin-title").html(coinName + " (" + coinSymbol + ")");
+              $$("#coin-icon").prop("src", coinImage);
+              $$("#coin-price").html("$" + coinPrice);
+              $$("#coin-rank").html("#" + coinRank);
+              $$("#coin-market-cap").html("$" + coinMarketCap);
+              $$("#coin-24h-volume").html("$" + coinVolume);
+              $$("#coin-24h-change").html(changePercent).addClass(changeColor);
+              $$("#coin-circulating-supply").html(coinSymbol + " " +  coinCirculatingSupply);
+              $$("#coin-max-supply").html(coinSymbol + " " +  coinMaxSupply);
+              $$("#coin-percentage-supplied").html(coinPercentageSupplied + "%");
+              $$("#coin-btc-price").html("฿" + coinBTCPrice);
         },
         error :  function(xhr, status){
 
@@ -686,6 +783,98 @@ function loadCoinDetails(coinToParse){
       });
 
   }
+
+
+
+
+/*
+  var ctx = document.getElementById('myChart');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+  });*/
+
+
+
+
+
+
+
+ $$(".add-2-my-coins, .remove-from-my-coins").hide();
+
+
+  var myCoins = window.localStorage.getItem("my_coins");
+  myCoins = JSON.parse(myCoins);
+
+
+  for(q = 0; q < myCoins.length; q++){
+
+    if (myCoins[q]["coin_symbol"] == coinToParse) {
+      $$(".remove-from-my-coins").show();
+      $$(".add-2-my-coins").hide();
+      break;
+    }
+    else{
+      $$(".add-2-my-coins").show();
+      $$(".remove-from-my-coins").hide();
+    }
+
+  }
+
+
+
+
+  	$$(".add-2-my-coins").click(function(){
+    if(myCoins.length == 21){
+      toastMe("Maximum of 20 coins can be added to <b>Favourites</b>");
+    }
+    else{
+      var thisCoinDetails = {
+        "coin_symbol" : coinToParse,
+        "coin_name" : coinName
+      }
+      myCoins.push(thisCoinDetails);
+      window.localStorage.setItem("my_coins", JSON.stringify(myCoins));
+      $$(".add-2-my-coins").hide();
+      $$(".remove-from-my-coins").show();
+
+      toastMe(coinName + " added to Favourites");
+    }
+    
+  });
+
+
+
+
+
+  	$$(".remove-from-my-coins").click(function(){
+
+    for(q = 0; q < myCoins.length; q++){
+
+      if (myCoins[q]["coin_symbol"] == coinToParse) {
+
+        var theIndex = myCoins.indexOf(myCoins[q]);
+        if (theIndex >  -1) {
+          myCoins.splice(theIndex, 1);
+          
+        }
+
+        window.localStorage.setItem("my_coins", JSON.stringify(myCoins));
+        $$(".add-2-my-coins").show();
+        $$(".remove-from-my-coins").hide();
+        
+        toastMe(coinName + " removed from Favourites");
+        break;
+      }
+
+    }  
+
+  });
+
+
+
+
+
+
 
 
 });
