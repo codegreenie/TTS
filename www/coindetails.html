@@ -3,10 +3,6 @@
 
 
 
-
- 
-
-
       <div class="navbar">
               <div class="navbar-inner">
                 
@@ -50,14 +46,14 @@
           <div class="tabs">
             <div id="market" class="page-content tab tab-active">
 
-              <div class="ptr-preloader">
-              <div class="preloader"></div>
-              <div class="ptr-arrow"></div>
+              <div class="block-title text-color-white" style="">
+                <span class="coin-price"></span>,
+                <span class="coin-btc-price text-color-orange"></span>
               </div>
 
 
               <div class="block" >
-                <canvas id="myChart" width="400" height="400" style="height:300px; border:solid thin #f93;"></canvas>
+                <canvas id="myChart" width="400" height="400" style="height:200px; border:solid thin #f93;"></canvas>
               </div>
               
 
@@ -84,10 +80,10 @@
 
             <!-- Coin details -->
 
-            <div class="row block text-color-white" style="margin:0;">
+            <div class="row block text-color-white coin-details" style="margin:0;">
               
               <div class="col-100">
-                <h4 style="margin: 0px;"><i class="icon f7-icons">money_dollar</i>Price</h4>
+                <h4 style="margin: 0px 0px 10px; font-size: 13px;"><i class="icon f7-icons" style="font-size: 18px;">money_dollar</i>Price</h4>
                 <div class="list" style="margin-top: 0px;">
                 <ul>
 
@@ -95,7 +91,7 @@
                     <div class="item-content">
                       <div class="item-inner">
                         <div class="item-title text-color-white">USD</div>
-                        <div class="item-after text-color-white" id="coin-price"></div>
+                        <div class="item-after text-color-white coin-price"></div>
                       </div>
                     </div>
                   </li>
@@ -105,7 +101,7 @@
                     <div class="item-content">
                       <div class="item-inner">
                         <div class="item-title text-color-white">BTC</div>
-                        <div class="item-after text-color-white" id="coin-btc-price"></div>
+                        <div class="item-after text-color-white coin-btc-price"></div>
                       </div>
                     </div>
                   </li>
@@ -119,7 +115,7 @@
 
 
               <div class="col-100">
-                <h4 style="margin: 0px;"><i class="icon f7-icons size-22">pie_chart</i> Market</h4>
+                <h4 style="margin: 0px 0px 10px; font-size: 13px;"><i class="icon f7-icons" style="font-size: 18px;">pie_chart</i> Market</h4>
                 <div class="list" style="margin-top: 0px;">
                 <ul>
 
@@ -163,7 +159,7 @@
 
 
               <div class="col-100">
-                <h4 style="margin: 0px;"><i class="icon f7-icons size-22">reload</i> Change &amp; Supply</h4>
+                <h4 style="margin: 0px 0px 10px; font-size: 13px;"><i class="icon f7-icons" style="font-size: 18px;">reload</i> Change &amp; Supply</h4>
                 <div class="list" style="margin-top: 0px;">
                 <ul>
 
@@ -221,42 +217,19 @@
 
 
 
-                 <div id="favorites" class="page-content tab ptr-content-favorites" data-ptr-distance="55">
+                 <div id="favorites" class="page-content tab infinite-scroll-content">
 
                 
 
-                 <div class="list no-hairlines-md no-hairlines-ios banks-list searchbar-found search-list">
-                    <ul id="bank-stack-list">
+                 <div class="list no-hairlines-md no-hairlines-ios coin-market-list">
+                    <ul id="coin-market-list">
 
                      
 
 
 
 
-                      <li>
-                        <a href="#" class="item-link item-content">
-                          <div class="item-media" style="border:solid 2px #ededed;border-radius:50%; width:40px;height:40px;background:url('imgs/paga.png'); background-size:cover; background-repeat:no-repeat;">
-                            <small style="margin: -60px auto 0px;">2</small>
-                          </div>
-                          <div class="item-inner">
-                            <div class="item-title text-color-white">
-                              <div class="item-header">Market Cap: $222B</div>
-                              Ethereum (ETH)
-                              <div class="item-footer text-color-white">
-                                <span>Volume 24H: $65B</span>
-                                <br>
-                                <small class="text-color-green">1H +0.37%</small>
-                                &nbsp;
-                                <small class="text-color-red">1D -0.28%</small>
-                                &nbsp;
-                                <small class="text-color-green">7D +0.62%</small>
-                              </div>
-                              
-                            </div>
-                            <div class="item-after text-color-white">$616.98</div>
-                          </div>
-                        </a>
-                      </li>
+                 
 
 
 
@@ -269,7 +242,7 @@
                   </div>
 
 
-
+                  <div class="preloader infinite-scroll-preloader"></div>
                 </div>
 
 
