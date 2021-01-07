@@ -688,6 +688,13 @@ $$(document).on('page:init', '.page[data-name="coindetails"]', function (e){
   var coinName;
 
 
+    function  thousands_separators(num) {
+                var num = parseFloat(num).toFixed(3);
+                var num_parts = num.toString().split(".");
+                num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                return num_parts.join(".");
+    }
+
 
   var bitcoinPrice = 0;
 
@@ -702,7 +709,10 @@ $$(document).on('page:init', '.page[data-name="coindetails"]', function (e){
             var coinPrice = data["priceUsd"];
             bitcoinPrice = coinPrice;
 
-            loadCoinDetails(coinToParse);
+            setTimeout(function(){
+                loadCoinDetails(coinToParse);
+              }, 1000);
+            
 
             },
             error :  function(xhr, status){
@@ -725,14 +735,30 @@ function loadCoinDetails(coinToParse){
             
             var lokey = JSON.parse(lokey);
             var data = lokey["data"];
+
+
+            let unix_timestamp = lokey["timestamp"];
+            // Create a new JavaScript Date object based on the timestamp
+            // multiplied by 1000 so that the argument is in milliseconds, not seconds.
+            var date = new Date(unix_timestamp);
+            // Hours part from the timestamp
+            
+            var day = date.getYear();
+            // Minutes part from the timestamp
+
+            var hours = date.getHours();
+            // Minutes part from the timestamp
+            var minutes = "0" + date.getMinutes();
+            // Seconds part from the timestamp
+            var seconds = "0" + date.getSeconds();
+
+            // Will display time in 10:30:23 format
+            var formattedTime = day + " " + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+            console.log(formattedTime);
             
 
-            function  thousands_separators(num) {
-                var num = parseFloat(num).toFixed(3);
-                var num_parts = num.toString().split(".");
-                num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                return num_parts.join(".");
-            }
+          
 
             
 
@@ -764,7 +790,7 @@ function loadCoinDetails(coinToParse){
               $$(".title").html(coinName);
               $$("#coin-title").html(coinName + " (" + coinSymbol + ")");
               $$("#coin-icon").prop("src", coinImage);
-              $$("#coin-price").html("$" + coinPrice);
+              $$(".coin-price").html("$" + coinPrice);
               $$("#coin-rank").html("#" + coinRank);
               $$("#coin-market-cap").html("$" + coinMarketCap);
               $$("#coin-24h-volume").html("$" + coinVolume);
@@ -772,7 +798,12 @@ function loadCoinDetails(coinToParse){
               $$("#coin-circulating-supply").html(coinSymbol + " " +  coinCirculatingSupply);
               $$("#coin-max-supply").html(coinSymbol + " " +  coinMaxSupply);
               $$("#coin-percentage-supplied").html(coinPercentageSupplied + "%");
-              $$("#coin-btc-price").html("฿" + coinBTCPrice);
+              $$(".coin-btc-price").html("฿" + coinBTCPrice);
+
+              setTimeout(function(){
+                loadCoinMarkets();
+              }, 1000);
+              
         },
         error :  function(xhr, status){
 
@@ -870,6 +901,135 @@ function loadCoinDetails(coinToParse){
 
   });
 
+
+
+
+
+
+    // Loading flag
+var allowInfinite = true;
+
+// Last loaded index
+var lastItemIndex = null;
+
+// Max items to load
+var maxItems = 100;
+
+// Append items per load
+var itemsPerLoad = 10;
+
+var bigMarketData = null;
+
+
+  function loadCoinMarkets(){
+
+    //load coin markets
+     app.request({
+        url : 'https://api.coincap.io/v2/assets/' + coinToParse + '/markets', 
+        timeout : '0',
+        method: 'GET',
+        success : function (realData) {
+            
+            var lokey = JSON.parse(realData);
+            console.log(lokey);
+            var data = lokey["data"];
+
+            bigMarketData = JSON.parse(realData);
+
+            var coinStack = "";
+
+
+
+          for(q = 0; q <= 19; q++){
+
+              var exchangeId = data[q]["exchangeId"];
+              var baseId = data[q]["baseId"];
+              var quoteId = data[q]["quoteId"];
+              var baseSymbol = data[q]["baseSymbol"];
+              var quoteSymbol = data[q]["quoteSymbol"];
+              var volumeUsd24Hr = thousands_separators(data[q]["volumeUsd24Hr"]);
+              var priceUsd = thousands_separators(data[q]["priceUsd"]);
+           
+
+
+           
+
+              coinStack += "<li><a href='#' class='item-link item-content'> <div class='item-inner'> <div class='item-title'> <div class='item-header'><b>" + exchangeId + "</b></div> " + baseSymbol + " " + quoteSymbol + "<div class='item-footer text-color-white'><b>$" + volumeUsd24Hr + "</b></div></div><div class='item-after text-color-white'>$" + priceUsd + "</div> </div> </a> </li>";
+
+                 
+                }
+
+                
+                $$("#coin-market-list").html(coinStack);
+                app.preloader.hide();
+                lastItemIndex = $$('.coin-market-list li').length;
+           
+        },
+        error :  function(xhr, status){
+
+            app.dialog.alert("Unable to fetch data");
+            console.log(status);
+            app.preloader.hide();
+        }
+      });
+
+
+   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   // Attach 'infinite' event handler
+$$('.infinite-scroll-content').on('infinite', function () {
+
+  console.log(bigMarketData);
+
+  // Exit, if loading in progress
+  if (!allowInfinite) return;
+
+  // Set loading flag
+  allowInfinite = false;
+
+  // Emulate 1s loading
+  setTimeout(function () {
+    // Reset loading flag
+    allowInfinite = true;
+
+    if (lastItemIndex >= maxItems) {
+      // Nothing more to load, detach infinite scroll events to prevent unnecessary loadings
+      //app.infiniteScroll.destroy('.infinite-scroll-content');
+      // Remove preloader
+      //$$('.infinite-scroll-preloader').remove();
+      return;
+    }
+
+    // Generate new items HTML
+    var html = '';
+    for (var i = lastItemIndex; i < lastItemIndex + itemsPerLoad; i++) {
+
+     
+      html += "<li><a href='#' class='item-link item-content'> <div class='item-inner'> <div class='item-title'> <div class='item-header'><b>" + bigMarketData["data"][i]["exchangeId"] + "</b></div> " + bigMarketData["data"][i]["baseSymbol"] + " " + bigMarketData["data"][i]["quoteSymbol"] + "<div class='item-footer text-color-white'><b>$" + thousands_separators(bigMarketData["data"][i]["volumeUsd24Hr"]) + "</b></div></div><div class='item-after text-color-white'>$" + thousands_separators(bigMarketData["data"][i]["priceUsd"]) + "</div> </div> </a> </li>";  
+    }
+
+    // Append new items
+    $$('.coin-market-list ul').append(html);
+
+    // Update last loaded index
+    lastItemIndex = $$('.coin-market-list li').length;
+    
+  }, 1000);
+});
 
 
 
