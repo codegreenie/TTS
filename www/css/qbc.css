@@ -23,3 +23,6 @@
 .tabbar .tab-link-active, .tabbar-labels .tab-link-active{
 	color:#fff;
 }
+.coin-details .item-title, .coin-details .item-after{
+	font-size:13px;
+}
