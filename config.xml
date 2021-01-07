@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.codegreenie.quickblockchain" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.codegreenie.quickblockchain" version="1.3.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Quick Blockchain</name>
     <description>
         Bitcoin, Ethereum, XRP prices, charts, portfolios, news and many things cryptocurrency
@@ -15,7 +15,6 @@
     <preference name="android-minSdkVersion" value="23" />
     <preference name="android-targetSdkVersion" value="29" />
     <plugin name="cordova-plugin-dialogs" source="npm" spec="~1.3.3" />
-    <plugin name="cordova-plugin-inappbrowser" source="npm" spec="~1.7.1" />
     <plugin name="cordova-plugin-statusbar" spec="2.4.3" />
     <plugin name="cordova-plugin-whitelist" spec="1.3.4" />
     <plugin name="cordova-plugin-x-socialsharing" spec="5.4.7">
