@@ -153,7 +153,7 @@ window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
                   if(window.AdMob) AdMob.prepareInterstitial({
                       adId:admobid.interstitial, 
                       autoShow:false,
-                      isTesting:true
+                      isTesting:false
                   });
 
               }
@@ -174,7 +174,7 @@ window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
                     position:AdMob.AD_POSITION.BOTTOM_CENTER,
                     overlap: true,
                     autoShow: false,
-                    isTesting : true,
+                    isTesting : false,
                     success : function(){
                       console.log("Yay! Banner ad is active");
                     },
