@@ -10,7 +10,8 @@
     <content src="index.html" />
     <icon src="icon.png" />
     <preference name="DisallowOverscroll" value="true" />
-     <preference name="phonegap-version" value="cli-9.0.0" />
+    <preference name="orientation" value="default" />
+    <preference name="phonegap-version" value="cli-9.0.0" />
     <preference name="android-build-tool" value="gradle" />
     <preference name="android-minSdkVersion" value="23" />
     <preference name="android-targetSdkVersion" value="29" />
@@ -28,7 +29,12 @@
     </plugin>
     <plugin name="onesignal-cordova-plugin" spec="2.9.1" />
     <platform name="android">
-        
+        <resource-file src="locales/android/drawable-mdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-mdpi/ic_stat_onesignal_default.png" />
+        <resource-file src="locales/android/drawable-hdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-hdpi/ic_stat_onesignal_default.png" />
+        <resource-file src="locales/android/drawable-xhdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-xhdpi/ic_stat_onesignal_default.png" />
+        <resource-file src="locales/android/drawable-xxhdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-xxhdpi/ic_stat_onesignal_default.png" />
+        <resource-file src="locales/android/drawable-xxxhdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-xxxhdpi/ic_stat_onesignal_default.png" />
+        <resource-file src="locales/android/drawable-xxxhdpi/ic_onesignal_large_icon_default.png" target="app/src/main/res/drawable-xxxhdpi/ic_onesignal_large_icon_default.png" />
     </platform>
     
   
