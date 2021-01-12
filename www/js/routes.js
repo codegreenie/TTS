@@ -23,5 +23,10 @@ var routes = [
     name: 'privacy',
     path: '/privacy/',
     url: './privacy.html'
+    },
+    {
+    name: 'donate',
+    path: '/donate/',
+    url: './donate.html'
     }
   ];

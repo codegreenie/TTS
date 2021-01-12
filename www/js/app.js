@@ -1,4 +1,4 @@
-var shareApp, changeStatusBarColor, routeTo, prepareIntAd, showInterstitialAd, showBottomBannerAd;
+var shareApp, changeStatusBarColor, routeTo, prepareIntAd, showInterstitialAd, showBottomBannerAd, copyAddress;
 // Dom7
 var $$ = Dom7;
 
@@ -77,7 +77,7 @@ var options = {
   message: 'Fastest access to Bitcoin & altcoin data. Download Quick Blockchain app', 
   subject: 'Quick Blockchain', // fi. for email
   files: [], // an array of filenames either locally or remotely
-  url: 'http://onelink.to/2w3zpp',
+  url: 'https://play.google.com/store/apps/details?id=com.codegreenie.quickblockchain',
   chooserTitle: 'Share via'
 };
 
@@ -268,11 +268,6 @@ $$(document).on('page:init', '.page[data-name="about"]', function (e){
   });
 
 
-  $$("#goto-privacy-btn").click(function(){
-    mainView.router.navigate("/privacy/");
-  });
-
-
 });
 
 
@@ -337,7 +332,7 @@ var allowInfinite = true;
 var lastItemIndex = null;
 
 // Max items to load
-var maxItems = 200;
+var maxItems = 250;
 
 // Append items per load
 var itemsPerLoad = 20;
@@ -396,7 +391,7 @@ var bigData = null;
           
 
              
-              //var coinImage = "https://cryptoicons.org/api/icon/" + coinSymbolLC + "/40";
+             
               
               var coinImage = "https://icons.bitbot.tools/api/" + coinSymbolLC + "/32x32";
 
@@ -410,6 +405,10 @@ var bigData = null;
                 $$("#coin-stack-list").html(coinStack);
                 app.preloader.hide();
                 lastItemIndex = $$('.coin-stack-list li').length;
+                
+                setTimeout(function() {
+                    loadFavoritesCoins();
+                 }, 500);
                 
                 
                 
@@ -474,6 +473,10 @@ $$('.infinite-scroll-content').on('infinite', function () {
 
     // Update last loaded index
     lastItemIndex = $$('.coin-stack-list li').length;
+
+    setTimeout(function() {
+      loadFavoritesCoins();
+    }, 500);
     
   }, 1000);
 });
@@ -526,6 +529,8 @@ $$('.infinite-scroll-content').on('infinite', function () {
 
   var myCoins = window.localStorage.getItem("my_coins");
   myCoins = JSON.parse(myCoins);
+
+  function loadFavoritesCoins(){
 
   if (myCoins.length != 1) {
     for(q = 1; q < myCoins.length; q++){
@@ -602,6 +607,8 @@ $$('.infinite-scroll-content').on('infinite', function () {
     app.dialog.alert("No favorite coin yet.");
 
   }
+
+}
 
 
 
@@ -697,6 +704,8 @@ $$(document).on('page:init', '.page[data-name="coindetails"]', function (e){
 
 
   var bitcoinPrice = 0;
+  var coinToParsePrice = 0;
+
 
 
   app.request({
@@ -737,25 +746,7 @@ function loadCoinDetails(coinToParse){
             var data = lokey["data"];
 
 
-            let unix_timestamp = lokey["timestamp"];
-            // Create a new JavaScript Date object based on the timestamp
-            // multiplied by 1000 so that the argument is in milliseconds, not seconds.
-            var date = new Date(unix_timestamp);
-            // Hours part from the timestamp
-            
-            var day = date.getYear();
-            // Minutes part from the timestamp
-
-            var hours = date.getHours();
-            // Minutes part from the timestamp
-            var minutes = "0" + date.getMinutes();
-            // Seconds part from the timestamp
-            var seconds = "0" + date.getSeconds();
-
-            // Will display time in 10:30:23 format
-            var formattedTime = day + " " + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-
-            console.log(formattedTime);
+         
             
 
           
@@ -776,6 +767,8 @@ function loadCoinDetails(coinToParse){
               var coinPercentageSupplied = parseInt((data["supply"] / data["maxSupply"]) * 100);
 
               var coinBTCPrice = parseFloat(data["priceUsd"] / bitcoinPrice).toFixed(8);
+
+              coinToParsePrice = data["priceUsd"];
 
               var coinImage = "https://icons.bitbot.tools/api/" + coinSymbolLC + "/32x32";
 
@@ -801,7 +794,7 @@ function loadCoinDetails(coinToParse){
               $$(".coin-btc-price").html("฿" + coinBTCPrice);
 
               setTimeout(function(){
-                loadCoinMarkets();
+                loadCoinHistory("d1");
               }, 1000);
               
         },
@@ -921,6 +914,8 @@ var itemsPerLoad = 10;
 var bigMarketData = null;
 
 
+
+
   function loadCoinMarkets(){
 
     //load coin markets
@@ -949,20 +944,23 @@ var bigMarketData = null;
               var quoteSymbol = data[q]["quoteSymbol"];
               var volumeUsd24Hr = thousands_separators(data[q]["volumeUsd24Hr"]);
               var priceUsd = thousands_separators(data[q]["priceUsd"]);
+
+              
            
 
 
            
 
-              coinStack += "<li><a href='#' class='item-link item-content'> <div class='item-inner'> <div class='item-title'> <div class='item-header'><b>" + exchangeId + "</b></div> " + baseSymbol + " " + quoteSymbol + "<div class='item-footer text-color-white'><b>$" + volumeUsd24Hr + "</b></div></div><div class='item-after text-color-white'>$" + priceUsd + "</div> </div> </a> </li>";
+              coinStack += "<li><a href='#' class='item-link item-content'> <div class='item-inner'> <div class='item-title'> <div class='item-header'><b>" + exchangeId + "</b></div> " + baseSymbol + " " + quoteSymbol + "<div class='item-footer text-color-white'>24H Vol: <b>$" + volumeUsd24Hr + "</b></div></div><div class='item-after text-color-white'>$" + priceUsd + "</div> </div> </a> </li>";
 
                  
                 }
 
                 
                 $$("#coin-market-list").html(coinStack);
-                app.preloader.hide();
                 lastItemIndex = $$('.coin-market-list li').length;
+                app.preloader.hide();
+                
            
         },
         error :  function(xhr, status){
@@ -1019,7 +1017,7 @@ $$('.infinite-scroll-content').on('infinite', function () {
     for (var i = lastItemIndex; i < lastItemIndex + itemsPerLoad; i++) {
 
      
-      html += "<li><a href='#' class='item-link item-content'> <div class='item-inner'> <div class='item-title'> <div class='item-header'><b>" + bigMarketData["data"][i]["exchangeId"] + "</b></div> " + bigMarketData["data"][i]["baseSymbol"] + " " + bigMarketData["data"][i]["quoteSymbol"] + "<div class='item-footer text-color-white'><b>$" + thousands_separators(bigMarketData["data"][i]["volumeUsd24Hr"]) + "</b></div></div><div class='item-after text-color-white'>$" + thousands_separators(bigMarketData["data"][i]["priceUsd"]) + "</div> </div> </a> </li>";  
+      html += "<li><a href='#' class='item-link item-content'> <div class='item-inner'> <div class='item-title'> <div class='item-header'><b>" + bigMarketData["data"][i]["exchangeId"] + "</b></div> " + bigMarketData["data"][i]["baseSymbol"] + " " + bigMarketData["data"][i]["quoteSymbol"] + "<div class='item-footer text-color-white'>24H Vol: <b>$" + thousands_separators(bigMarketData["data"][i]["volumeUsd24Hr"]) + "</b></div></div><div class='item-after text-color-white'>$" + thousands_separators(bigMarketData["data"][i]["priceUsd"]) + "</div> </div> </a> </li>";  
     }
 
     // Append new items
@@ -1036,6 +1034,226 @@ $$('.infinite-scroll-content').on('infinite', function () {
 
 
 
+  
+  var coinHistory = [];
+
+
+
+
+
+  function loadCoinHistory(intervalTime){
+
+    //load coin markets
+     app.request({
+        url : 'https://api.coincap.io/v2/assets/' + coinToParse + '/history?interval=' + intervalTime, 
+        timeout : '0',
+        method: 'GET',
+        
+        success : function (realData) {
+            
+            var lokey = JSON.parse(realData);
+            console.log(lokey);
+            lokey = lokey['data'];
+
+            var tenStepsBackwards = lokey.length - 11;
+
+            for (var i = tenStepsBackwards; i < lokey.length; i++) {
+             coinHistory.push([lokey[i]["time"], lokey[i]["priceUsd"]]);
+             
+              console.log(lokey[i]);
+            }
+
+           
+
+           
+           coinHistory.push([new Date().getTime(), coinToParsePrice]);
+           console.log("coin history is ", coinHistory);
+
+           runChart();
+           setTimeout(function(){
+                loadCoinMarkets();
+              }, 1000);
+
+           
+        },
+        error :  function(xhr, status){
+
+            app.dialog.alert("Unable to fetch data");
+            console.log(status);
+            app.preloader.hide();
+        }
+      });
+
+
+   }
+
+
+
+
+var screenWidth = $$('body').width();
+
+
+
+function runChart(){
+
+
+var options = {
+
+  tooltip: {
+      enabled: true,
+      style: {
+        fontSize: '12px',
+        fontFamily: undefined
+      },
+       fillSeriesColor: true,
+         x: {
+          show: false,
+      },
+      theme : "dark"
+    },
+
+
+  markers: {
+    size: 5,
+    colors: ["#069"],
+    strokeColors: '#ffffff',
+  },
+
+  stroke: {
+    show: true,
+    curve: 'smooth',
+    lineCap: 'butt',
+    colors: ['#f93'],
+    width: 3,
+    dashArray: 0,      
+},
+
+dataLabels: {
+  enabled: true,
+  formatter: (value) => { return "$" + parseFloat(value.toFixed(2)).toLocaleString() },
+  style: {
+      fontSize: '10px',
+      fontWeight: 400,
+      colors: ['#069', '#096', '#f93', '#906']
+  },
+  offsetX: -4,
+},
+
+  grid: {
+  borderColor: '#ffffff',
+  strokeDashArray: 1,
+},
+
+  chart: {
+    height: 300,
+    width: parseInt(screenWidth),
+    type: "area",
+    animations: {
+      initialAnimation: {
+        enabled: false
+      }
+    },
+    toolbar :{
+      show: false
+    }
+   
+  },
+  series: [
+    {
+      name: coinToParse.toUpperCase(),
+      data: coinHistory
+    }
+  ],
+  xaxis: {
+    type: 'datetime',
+    labels : {
+      style : {
+        colors : '#ffffff',
+        fontSize: '10px',
+        fontWeight: 200,
+      }
+    },
+  },
+
+  yaxis: {
+    type: 'datetime',
+    labels : {
+      style : {
+        colors : '#ffffff',
+        fontSize: '10px',
+        fontWeight: 200,
+      },
+      formatter: (value) => { return "$" + parseFloat(value.toFixed(2)).toLocaleString() },
+    },
+  }
+
+};
+
+var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+chart.render();
+
+}
+
+
+
+
+
+
+
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$$(document).on('page:init', '.page[data-name="donate"]', function (e){
+
+  copyAddress = function(coinName, coinAddressField){
+
+       /* Get the text field */
+  var copyText = document.getElementById(coinAddressField);
+
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+
+  /* Alert the copied text */
+  app.dialog.alert(coinName + " address copied!");
+   }
+
+
+
+
+   $$(".share-btn").click(function(){
+    shareApp();
+    });
+
+
+});
+
+
+
+
+
+
 
