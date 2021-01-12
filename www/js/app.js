@@ -604,7 +604,7 @@ $$('.infinite-scroll-content').on('infinite', function () {
   else{
 
     app.preloader.hide();
-    app.dialog.alert("No favorite coin yet.");
+    console.log("No favorite coin yet.");
 
   }
 
