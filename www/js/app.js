@@ -52,7 +52,7 @@ function deviceIsReady(){
         StatusBar.backgroundColorByHexString(suppliedColor);
       }
 
-  /*var notificationOpenedCallback = function(jsonData) {
+  var notificationOpenedCallback = function(jsonData) {
     console.log('notificationOpenedCallback: ' + JSON.stringify(jsonData));
   };
 
@@ -62,12 +62,12 @@ function deviceIsReady(){
   iosSettings["kOSSettingsKeyInAppLaunchURL"] = false;
 
    window.plugins.OneSignal
-    .startInit("5bb0517e-54d7-407b-94da-21fb6b9c03cc")
+    .startInit("9bca5640-d5a7-47a0-a21e-e868f6ec54bc")
     .handleNotificationOpened(notificationOpenedCallback)
     .iOSSettings(iosSettings)
     .inFocusDisplaying("none")
     .endInit();
-*/
+
 
 shareApp = function(){
 
