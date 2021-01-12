@@ -332,7 +332,7 @@ var allowInfinite = true;
 var lastItemIndex = null;
 
 // Max items to load
-var maxItems = 250;
+var maxItems = 200;
 
 // Append items per load
 var itemsPerLoad = 20;
