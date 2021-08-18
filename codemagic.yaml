@@ -1,0 +1,49 @@
+workflows:
+  android-workflow:
+    name: Android workflow
+    environment:
+      vars:
+        KEYSTORE: Encrypted(...) # <-- Put your encrypted keystore file here
+        KEYSTORE_PATH: '/tmp/keystore.keystore'
+        KEYSTORE_PASSWORD: Encrypted(...) # <-- Put your encrypted keystore password here
+        KEY_ALIAS_PASSWORD: Encrypted(...) # <-- Put your encrypted keystore alias password here
+        KEY_ALIAS: Encrypted(...) # <-- Put your encrypted keystore alias here
+      xcode: 12.4
+      node: 12
+      npm: 6        
+    cache:
+      cache_paths:
+        - $FCI_BUILD_DIR/node_modules
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+          npm ci
+          cvm install 9.0.0
+          cvm use 9.0.0        
+      - name: Add Android platform
+        script: |
+          set -x
+          cordova platform remove android --nosave
+          cordova platform add android --confirm --no-interactive --noresources
+      - name: Build Android
+        script: |    
+          set -x
+          set -e
+          cordova build android --release --no-interactive --prod --device
+          echo $KEYSTORE | base64 --decode > $KEYSTORE_PATH
+          UNSIGNED_APK_PATH=$(find platforms/android/app/build/outputs -name "*.apk" | head -1)
+          jarsigner -sigalg SHA1withRSA -digestalg SHA1 -keystore "${KEYSTORE_PATH}" -storepass "${KEYSTORE_PASSWORD}" -keypass "${KEY_ALIAS_PASSWORD}" "${UNSIGNED_APK_PATH}" "${KEY_ALIAS}"
+          mv $UNSIGNED_APK_PATH $(echo $UNSIGNED_APK_PATH | sed 's/-unsigned//')
+    artifacts:
+      - platforms/android/app/build/outputs/**/*.apk
+      - platforms/android/app/build/outputs/**/mapping.txt
+    publishing:
+        # See the following link for details about email publishing - https://docs.codemagic.io/publishing-yaml/distribution/#email
+        email:
+            recipients:
+                - user_1@example.com
+                - user_2@example.com
+            notify:
+              success: true     # To not receive a notification when a build succeeds
+              failure: false    # To not receive a notification when a build fails
