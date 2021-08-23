@@ -4,10 +4,10 @@ workflows:
     environment:
       vars:
         KEYSTORE: Encrypted(...) # <-- Put your encrypted keystore file here
-        KEYSTORE_PATH: '/tmp/keystore.keystore'
-        KEYSTORE_PASSWORD: Encrypted(...) # <-- Put your encrypted keystore password here
-        KEY_ALIAS_PASSWORD: Encrypted(...) # <-- Put your encrypted keystore alias password here
-        KEY_ALIAS: Encrypted(...) # <-- Put your encrypted keystore alias here
+        KEYSTORE_PATH: '/torchlightpro_keystore.keystore'
+        KEYSTORE_PASSWORD: Encrypted(Z0FBQUFBQmhKQkhuR3FKa3pEM1NxRTRlZVdoVm1TVmoxaG1MZzFjSW0zYkhmcVVTUVJxcnVYWDctaUg4ajlhdjluRG1RV3pENDFfTGwzTmR4RXJiNUpob19VaHpYbGtoTVZEZlMxN3pCR3I4Mjl4OTRzNmxjSXc9) # <-- Put your encrypted keystore password here
+        KEY_ALIAS_PASSWORD: Encrypted(Z0FBQUFBQmhKQkhuR3FKa3pEM1NxRTRlZVdoVm1TVmoxaG1MZzFjSW0zYkhmcVVTUVJxcnVYWDctaUg4ajlhdjluRG1RV3pENDFfTGwzTmR4RXJiNUpob19VaHpYbGtoTVZEZlMxN3pCR3I4Mjl4OTRzNmxjSXc9) # <-- Put your encrypted keystore alias password here
+        KEY_ALIAS: Encrypted(Z0FBQUFBQmhKQkd4N3dDVHV5dFNWOHc2d2NkRGg0aTNaYnFkajNYS2J0c1hkVnFnSXpITFFQTTJha0JNVXR4czNVdFM5VmtLdUt5RWtOaktONzI1QUVnYjdRY2cyR1dDSnc9PQ==) # <-- Put your encrypted keystore alias here
       xcode: 12.4
       node: 12
       npm: 6        
